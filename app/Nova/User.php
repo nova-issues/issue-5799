@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Lenses\Test;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -36,6 +37,14 @@ class User extends Resource
     public static $search = [
         'id', 'name', 'email',
     ];
+
+    /**
+     * The click action to use when clicking on the resource in the table.
+     * Can be one of: 'detail' (default), 'edit', 'select', 'preview', or 'ignore'.
+     *
+     * @var string
+     */
+    public static $clickAction = 'preview';
 
     /**
      * Get the fields displayed by the resource.
@@ -128,7 +137,9 @@ class User extends Resource
      */
     public function lenses(NovaRequest $request)
     {
-        return [];
+        return [
+            new Test()
+        ];
     }
 
     /**
@@ -139,6 +150,8 @@ class User extends Resource
      */
     public function actions(NovaRequest $request)
     {
-        return [];
+        return [
+            (new \App\Nova\Actions\Test)->onlyInline()
+        ];
     }
 }
