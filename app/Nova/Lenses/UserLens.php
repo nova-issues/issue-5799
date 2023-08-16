@@ -9,7 +9,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Lenses\Lens;
 use Laravel\Nova\Nova;
 
-class Test extends Lens
+class UserLens extends Lens
 {
     /**
      * The columns that should be searched.
@@ -75,9 +75,7 @@ class Test extends Lens
      */
     public function actions(NovaRequest $request)
     {
-        return [
-            (new \App\Nova\Actions\Test)->onlyInline()
-        ];
+        return parent::actions($request);
     }
 
     /**
@@ -87,6 +85,6 @@ class Test extends Lens
      */
     public function uriKey()
     {
-        return 'test';
+        return 'user-lens';
     }
 }

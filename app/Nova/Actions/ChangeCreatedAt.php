@@ -8,10 +8,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
-use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Test extends Action
+class ChangeCreatedAt extends Action
 {
     use InteractsWithQueue, Queueable;
 
@@ -31,12 +31,13 @@ class Test extends Action
      * Get the fields available on the action.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
+     * @return array<int, \Laravel\Nova\Fields\Field>
      */
-    public function fields(NovaRequest $request)
+    public function fields(NovaRequest $request): array
     {
         return [
-            Text::make('Toto')->rules('required')
+            DateTime::make('Created At', 'created_at')
+                ->rules('required'),
         ];
     }
 }

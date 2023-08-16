@@ -2,11 +2,9 @@
 
 namespace App\Nova;
 
-use App\Nova\Lenses\Test;
+use App\Nova\Actions\ChangeCreatedAt;
+use App\Nova\Lenses\UserLens;
 use Illuminate\Validation\Rules;
-use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
@@ -44,7 +42,7 @@ class User extends Resource
      *
      * @var string
      */
-    public static $clickAction = 'preview';
+    public static $clickAction = 'ignore';
 
     /**
      * Get the fields displayed by the resource.
@@ -73,37 +71,6 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules('required', Rules\Password::defaults())
                 ->updateRules('nullable', Rules\Password::defaults()),
-
-            Boolean::make(__('Collective'), 'training_type')
-                ->onlyOnForms(),
-
-            BelongsTo::make(__('Group'), 'learnerTrainingGroup', LearnerTrainingGroup::class)
-                ->nullable()
-                ->showCreateRelationButton()
-                ->hide()
-                ->dependsOn('training_type', function (BelongsTo $field, NovaRequest $request, $formData) {
-                    if ($formData->training_type) {
-                        $field->rules('required')->show();
-                    } else {
-                        $field->hide()->setValue(null);
-                    }
-                })
-                ->onlyOnForms(),
-
-            Text::make(__('Training'), 'test')
-                ->rules('required')
-                ->hide()
-                ->dependsOn(['learnerTrainingGroup', 'training_type'], function (Text $field, NovaRequest $request, FormData $formData) {
-                    $group_id = $formData->learnerTrainingGroup;
-                    $training_type = $formData->training_type;
-
-                    if (!$training_type || ($training_type && $group_id != null)) {
-                        $field->show();
-                    } else {
-                        $field->hide();
-                    }
-                })
-                ->onlyOnForms()
         ];
     }
 
@@ -138,7 +105,7 @@ class User extends Resource
     public function lenses(NovaRequest $request)
     {
         return [
-            new Test()
+            new UserLens()
         ];
     }
 
@@ -151,7 +118,7 @@ class User extends Resource
     public function actions(NovaRequest $request)
     {
         return [
-            (new \App\Nova\Actions\Test)->onlyInline()
+            ChangeCreatedAt::make()->sole()
         ];
     }
 }
